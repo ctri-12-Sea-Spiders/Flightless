@@ -13,24 +13,12 @@ const dummyRoundTripRes = require('../testingData/roundTripRes');
 flightController.fetchData = (req, res, next) => {
   if (useDummyData) {
     console.log('fetching dummy data. roundtrip: ', req.body.round_trip);
-    const dummyData = req.body.round_trip
-      ? dummyRoundTripRes
-      : dummyOnewayTripRes;
+    const dummyData = req.body.round_trip ? dummyRoundTripRes : dummyOnewayTripRes;
     res.locals.flights = dummyData;
     return next();
   } else {
     // compose endpoint
-    const {
-      dep_location,
-      arr_location,
-      dep_date,
-      return_date,
-      adults,
-      children,
-      infants,
-      cabin_class,
-      round_trip,
-    } = req.body;
+    const { dep_location, arr_location, dep_date, return_date, adults, children, infants, cabin_class, round_trip } = req.body;
     let endpoint;
     if (round_trip) {
       endpoint = `https://api.flightapi.io/roundtrip/${FLIGHTSAPI_KEY}/${dep_location}/${arr_location}/${dep_date}/${return_date}/${adults}/${children}/${infants}/${cabin_class}/USD`;
@@ -105,17 +93,10 @@ flightController.parseData = (req, res, next) => {
           flightData.airlines.find((airline) => airline.code == code).name
       );
       // ditto for layover airports
-      const layovers = rawLeg.stopoverAirportCodes.map(
-        (code) =>
-          flightData.airports.find((airport) => airport.code == code).name
-      );
+      const layovers = rawLeg.stopoverAirportCodes.map((code) => flightData.airports.find((airport) => airport.code == code).name);
       // ditto for dep and arr airports
-      const depAirport = flightData.airports.find(
-        (airport) => airport.code == rawLeg.departureAirportCode
-      );
-      const arrAirport = flightData.airports.find(
-        (airport) => airport.code == rawLeg.arrivalAirportCode
-      );
+      const depAirport = flightData.airports.find((airport) => airport.code == rawLeg.departureAirportCode);
+      const arrAirport = flightData.airports.find((airport) => airport.code == rawLeg.arrivalAirportCode);
       flightObj.legs.push({
         departureTime,
         arrivalTime,

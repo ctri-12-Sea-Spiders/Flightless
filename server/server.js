@@ -40,25 +40,31 @@ app.delete('/api/trips', (req, res) => {
 
 // Route fetches data from API and returns to front end
 // TODO: add middleware to fetch from API
-app.post(
-  '/api/flights',
-  tripController.createData,
-  flightController.fetchData,
-  flightController.parseData,
-  (req, res) => {
-    return res.status(200).json(res.locals.flights);
-    //}
-    message: {
-      err: 'An error occurred';
-    }
-    //};
-    const errorObj = Object.assign(defaultErr, err);
-    console.log('Error log: ', errorObj.log);
-    console.log('Error origin: ', err);
-    const errorStatus = errorObj.status || 500;
-    return res.status(errorStatus).json(errorObj.message);
-  }
-);
+app.post('/api/flights', tripController.createData, flightController.fetchData, flightController.parseData, (req, res) => {
+  return res.status(200).json(res.locals.flights);
+});
+
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: 'Express error handler caught unknown middleware error',
+    status: 500,
+    message: { err: 'An error occured' },
+  };
+  const errorObj = Object.assign({}, defaultErr, err);
+  console.log(errorObj.log);
+  return res.status(errorObj.status).json(errorObj.message);
+});
+
+//   message: {
+//     err: 'An error occurred';
+//   }
+//   //};
+//   const errorObj = Object.assign(defaultErr, err);
+//   console.log('Error log: ', errorObj.log);
+//   console.log('Error origin: ', err);
+//   const errorStatus = errorObj.status || 500;
+//   return res.status(errorStatus).json(errorObj.message);
+// });
 
 app.listen(3000, () => {
   console.log(`Listening on port: 3000...`);
