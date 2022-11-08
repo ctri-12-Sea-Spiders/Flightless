@@ -39,6 +39,7 @@ const db = require('../models/tripModels');
 
 const tripController = {};
 
+// request data coming from trip input form
 tripController.createData = (req, res, next) => {
   /*
     Sample request body
